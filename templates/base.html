@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Warbler</title>
+  <title>BookClub</title>
 
   <link rel="stylesheet"
         href="https://unpkg.com/bootstrap/dist/css/bootstrap.css">
@@ -14,7 +14,7 @@
   <link rel="stylesheet"
         href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
   <link rel="stylesheet" href="/static/stylesheets/style.css">
-  <link rel="shortcut icon" href="/static/favicon.ico">
+  <!-- <link rel="shortcut icon" href="/static/images/book_logo.png"> -->
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
@@ -22,12 +22,12 @@
   <div class="container-fluid">
     <div class="navbar-header">
       <a href="/" class="navbar-brand">
-        <img src="/static/images/warbler-logo.png" alt="logo">
-        <span>Warbler</span>
+        <img src="/static/images/book_logo.png" alt="logo">
+        <span>BookClub</span>
       </a>
     </div>
     <ul class="nav navbar-nav navbar-right">
-      {% if request.endpoint != None %}
+      <!-- {% if request.endpoint != None %}
       <li>
         <form class="navbar-form navbar-right" action="/users">
           <input name="q" class="form-control" placeholder="Search Warbler" id="search">
@@ -36,26 +36,24 @@
           </button>
         </form>
       </li>
-      {% endif %}
+      {% endif %} -->
       {% if not g.user %}
       <li><a href="/signup">Sign up</a></li>
       <li><a href="/login">Log in</a></li>
       {% else %}
       <li>
-        <a href="/users/{{ g.user.id }}">
-          <img src="{{ g.user.image_url }}" alt="{{ g.user.username }}">
-        </a>
+        <a href="/users/{{ g.user.id }}">{{ g.user.username }}</a>
       </li>
-      <li><a href="/messages/new">New Message</a></li>
+      <!-- <li><a href="/messages/new">New Message</a></li> -->
       <li><a href="/logout">Log out</a></li>
       {% endif %}
     </ul>
   </div>
 </nav>
 <div class="container">
-  {% for category, message in get_flashed_messages(with_categories=True) %}
+  <!-- {% for category, message in get_flashed_messages(with_categories=True) %}
   <div class="alert alert-{{ category }}">{{ message }}</div>
-  {% endfor %}
+  {% endfor %} -->
 
   {% block content %}
   {% endblock %}

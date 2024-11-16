@@ -9,46 +9,7 @@ bcrypt = Bcrypt()
 db = SQLAlchemy()
 
 
-# class Follows(db.Model):
-#     """Connection of a follower <-> followed_user."""
-
-#     __tablename__ = 'follows'
-
-#     user_being_followed_id = db.Column(
-#         db.Integer,
-#         db.ForeignKey('users.id', ondelete="cascade"),
-#         primary_key=True,
-#     )
-
-#     user_following_id = db.Column(
-#         db.Integer,
-#         db.ForeignKey('users.id', ondelete="cascade"),
-#         primary_key=True,
-#     )
-
-
-# class Likes(db.Model):
-#     """Mapping user likes to warbles."""
-
-#     __tablename__ = 'likes' 
-
-#     id = db.Column(
-#         db.Integer,
-#         primary_key=True
-#     )
-
-#     user_id = db.Column(
-#         db.Integer,
-#         db.ForeignKey('users.id', ondelete='cascade')
-#     )
-
-#     message_id = db.Column(
-#         db.Integer,
-#         db.ForeignKey('messages.id', ondelete='cascade'),
-#         unique=True
-#     )
-
-
+# Could be adapter to Comments class
 # class Message(db.Model):
 #     """An individual message ("warble")."""
 
@@ -100,16 +61,6 @@ class User(db.Model):
         unique=True,
     )
 
-    # image_url = db.Column(
-    #     db.Text,
-    #     default="/static/images/default-pic.png",
-    # )
-
-    # header_image_url = db.Column(
-    #     db.Text,
-    #     default="/static/images/warbler-hero.jpg"
-    # )
-
     bio = db.Column(
         db.Text,
     )
@@ -125,52 +76,9 @@ class User(db.Model):
 
     # messages = db.relationship('Message')
 
-    # followers = db.relationship(
-    #     "User",
-    #     secondary="follows",
-    #     primaryjoin=(Follows.user_being_followed_id == id),
-    #     secondaryjoin=(Follows.user_following_id == id)
-    # )
-
-    # following = db.relationship(
-    #     "User",
-    #     secondary="follows",
-    #     primaryjoin=(Follows.user_following_id == id),
-    #     secondaryjoin=(Follows.user_being_followed_id == id)
-    # )
-
-    # likes = db.relationship(
-    #     'Message',
-    #     secondary="likes"
-    # )
 
     def __repr__(self):
         return f"<User #{self.id}: {self.username}, {self.email}>"
-
-    # def is_followed_by(self, other_user):
-    #     """Is this user followed by `other_user`?"""
-
-    #     found_user_list = [user for user in self.followers if user == other_user]
-    #     return len(found_user_list) == 1
-
-    # def is_following(self, other_user):
-    #     """Is this user following `other_user`?"""
-
-    #     found_user_list = [user for user in self.following if user == other_user]
-    #     return len(found_user_list) == 1
-    
-    # def is_message_liked(self, msg_id):
-    #     """Is this message already liked by the `current logged in user`?"""
-    #     # Test is message id from the 'message' table is present on the 'likes' table
-    #     # True if message id is found, false otherwise
-    #     # Since user.likes refers to the messages Id that the user likes we can check if a new message id
-    #     # in the list of exisiting user likes 
-    #     print(f"User likes = {self.likes}")
-    #     found_user_msgs = [mid.id for mid in self.likes if mid.id == msg_id]
-    #     if found_user_msgs:
-    #         print(f'well msg_id = {msg_id}', [f"User: {mid.user_id}, MessageId: {mid.id}" for mid in self.likes])
-    #     return len(found_user_msgs) == 1
-    
 
 
     @classmethod
@@ -181,7 +89,7 @@ class User(db.Model):
         """
 
         hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
-
+        
         user = User(
             username=username,
             email=email,
