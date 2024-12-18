@@ -1,12 +1,11 @@
 import os
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, flash, redirect, session, g, jsonify, url_for
+from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import and_
 from forms import UserAddForm, LoginForm, UserEditForm
 from models import db, connect_db, User, Book, Read
-import requests
 
 load_dotenv()
 
@@ -16,11 +15,8 @@ app = Flask(__name__)
 
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
-# app.config['SQLALCHEMY_DATABASE_URI'] = (
-#     os.environ.get('DATABASE_URL', 'postgresql:///bookclub'))
-# If running on SUPABASE
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    os.environ.get('SUPABASE_DB_URL', 'postgresql:///bookclub'))
+    os.environ.get('DATABASE_URL', 'postgresql:///bookclub'))
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
@@ -317,44 +313,47 @@ def delete_book_from_database(book_id):
         flash("No matching row found to delete.", "danger")
 
     return redirect(f"/")
+
 ##############################################################################
-# API for Book Search
+# Comments routes:
 
-# Route to handle API requests
-@app.route('/search', methods=['GET'])
-def search():
-    # titles = []
-    query = request.args.get('q')  # Get the search query from the URL
-    if not query:
-        return jsonify({'error': 'No query provided'}), 400
+# @app.route('/comments/new', methods=["GET", "POST"])
+# def messages_add():
+#     """Add a comment on a book:
 
-    # Open Library API endpoint
-    api_url = "https://openlibrary.org/search.json"
-    params = {'q': query}  # Add query as a parameter
+#     Show form if GET. If valid, update message and redirect to user page.
+#     """
 
-    # Make the API call
-    response = requests.get(api_url, params=params)
-    # import pdb; pdb.set_trace()
+#     if not g.user:
+#         flash("Access unauthorized.", "danger")
+#         return redirect("/")
 
-    # Check for a successful response
-    if response.status_code == 200:
-        data = response.json()
-        # books = data.get('docs', [])[:5]  # Limit to 5 results
-        books = data.get('docs', [])[:5]  # Limit to 5 results
-        titles = [f"{b['title']}" for b in books]
-        # return jsonify(titles)  # Return books as JSON
-        if g.user:
-            # Query Books table using the database library
-            books_table = db.session.query(Book).all()
+#     form = CommentForm()
 
-            # Store the data in g 
-            g.books_table = books_table
-        
+#     if form.validate_on_submit():
+#         comment = Comment(text=form.text.data)
+#         g.user.comments.append(comment)
+#         db.session.commit()
 
-        return render_template('home.html', titles=titles)
-        # return redirect(url_for('homepage', titles=titles))
-    else:
-        return jsonify({'error': 'Failed to fetch data'}), 500
+#         return redirect(f"/users/{g.user.id}")
+
+#     return render_template('comments/new.html', form=form)
+
+
+# @app.route('/messages/<int:message_id>/delete', methods=["POST"])
+# def messages_destroy(message_id):
+#     """Delete a message."""
+
+#     if not g.user:
+#         flash("Access unauthorized.", "danger")
+#         return redirect("/")
+
+#     msg = Message.query.get(message_id)
+#     db.session.delete(msg)
+#     db.session.commit()
+
+#     return redirect(f"/users/{g.user.id}")
+
 
 ##############################################################################
 # Homepage and error pages
@@ -364,6 +363,7 @@ def search():
 def homepage():
     """Show homepage:
     """
+
     if g.user:
         # Query Books table using the database library
         books_table = db.session.query(Book).all()
@@ -376,9 +376,19 @@ def homepage():
         read_book_ids = [] 
         for read in g.user_reads:
             read_book_ids.append(read.book_id)
-        # print(read_book_ids)
+        print(read_book_ids)
         g.read_book_ids = read_book_ids
-        
+        # print(g.user_reads)
+        # print(g.user.reads)
+        # messages = (Message
+        #             .query
+        #             .filter(Message.user_id.in_([g.user.id] + [f.id for f in g.user.following]))
+        #             .order_by(Message.timestamp.desc())
+        #             .limit(100)
+        #             .all())
+
+
+
 
         return render_template('home.html')
 

@@ -2,76 +2,100 @@
 {% block content %}
   <div class="row">
 
-    <aside class="col-md-4 col-lg-3 col-sm-12" id="home-aside">
+    <aside class="col-md-3 col-lg-2 col-sm-10" id="home-aside">
       <div class="card user-card">
         <div>
-          <div class="image-wrapper">
-            <img src="{{ g.user.header_image_url }}" alt="" class="card-hero">
-          </div>
           <a href="/users/{{ g.user.id }}" class="card-link">
-            <img src="{{ g.user.image_url }}"
-                 alt="Image for {{ g.user.username }}"
-                 class="card-image">
-            <p>@{{ g.user.username }}</p>
+            <p>{{ g.user.username }} </p>
           </a>
-          <!-- <ul class="user-stats nav nav-pills">
-            <li class="stat">
-              <p class="small">Messages</p>
-              <h4>
-                <a href="/users/{{ g.user.id }}">{{ g.user.messages | length }}</a>
-              </h4>
-            </li>
-            <li class="stat">
-              <p class="small">Following</p>
-              <h4>
-                <a href="/users/{{ g.user.id }}/following">{{ g.user.following | length }}</a>
-              </h4>
-            </li>
-            <li class="stat">
-              <p class="small">Followers</p>
-              <h4>
-                <a href="/users/{{ g.user.id }}/followers">{{ g.user.followers | length }}</a>
-              </h4>
-            </li>
-          </ul> -->
+          <p class="card-link">Bio: {{ g.user.bio }} </p>
+          <p class="card-link"> Books read: {{ g.user.books_read | length }} </p>
         </div>
       </div>
     </aside>
-<!-- 
-    <div class="col-lg-6 col-md-8 col-sm-12">
-      <ul class="list-group" id="messages">
-        {% for msg in messages %}
+    <!--  -->
+    <div class="col-lg-4 col-md-8 col-sm-12"> 
+      <h1> Books Read </h1>
+      <form method="POST"
+            action="/booksread/add">
+            <label for="booktitle">Book Title:</label>
+            <input type="text" id="booktitle" name="booktitle" required><br><br>
+    
+            <label for="bookimage">Book Image URL:</label>
+            <input type="text" id="bookimage" name="bookimage"><br><br>
+            
+            <button type="submit">Add Book</button>
+    
+
+      </form>
+      <ul class="list-group" id="books">
+        {% for book in g.user.books_read %}
           <li class="list-group-item">
-            <a href="/messages/{{ msg.id  }}" class="message-link">
-            <a href="/users/{{ msg.user.id }}">
-              <img src="{{ msg.user.image_url }}" alt="" class="timeline-image">
+            <a href="/books/{{ book.id  }}" class="book-link">
+              <img src="{{ book.bookimag_url }}" alt="" class="timeline-image">
             </a>
-            <div class="message-area">
-              <a href="/users/{{ msg.user.id }}">@{{ msg.user.username }}</a>
-              <span class="text-muted">{{ msg.timestamp.strftime('%d %B %Y') }}</span>
-              <p>{{ msg.text }}</p>
+            <div class="review-area">
+              <a href="/books/{{ book.id}}" class="book-link"> {{ book.booktitle }} </a>
             </div>
-
-            {% if g.user.is_message_liked(msg.id) %}
-              <form method="POST"
-                    action="/users/unlike/{{ msg.id }}" id="messages-form">
-                <button class="btn btn-sm btn-primary">
-                <i class="fa fa-solid fa-star"></i>
-                </button> 
-              </form>
-            {% else %}
-              <form method="POST" 
-                    action="/users/like/{{ msg.id }}" id="messages-form">
-                <button class="btn btn-sm btn-secondary"> 
-                <i class="fa fa-thumbs-up"></i> 
-                </button>
-              </form>
-            {% endif %}
-
+            <form method="POST"
+                  action="/users/books/deleteread/{{ book.id }}" id="messages-form">
+              <button class="minus malt">
+              </button> 
+            </form>
           </li>
         {% endfor %}
       </ul>
-    </div> -->
-
+    </div> 
+    <div class="col-lg-4 col-md-4 col-sm-6"> 
+      <h1> Bookclub Books</h1>
+      <h2> (All members inputs) </h2>
+      <ul class="list-group" id="books">
+        {% for book in g.books_table %}
+          <li class="list-group-item">
+            <a href="/books/{{ book.id  }}" class="book-link">
+              <img src="{{ book.bookimag_url }}" alt="" class="timeline-image">
+            </a>
+            <div class="review-area">
+              <a href="/books/{{ book.id}}" class="book-link"> {{ book.booktitle }} </a>
+            </div>
+            <form method="POST" 
+                  action="/books/delete/{{ book.id }}" id="bookdelete-form">
+              <button class="minus malt"> 
+              </button>
+            </form>
+    
+          {% if g.user_reads %}
+            {% for read in g.user_reads %}
+              {% if book.id not in g.read_book_ids %}
+              <form method="POST" 
+                    action="/users/books/addread/{{ book.id }}" id="messages-form">
+                <button class="plus palt"> 
+                </button>
+              </form>
+              {% endif %}
+            {% endfor %}
+          {% else %}
+              <form method="POST" 
+                    action="/users/books/addread/{{ book.id }}" id="messages-form">
+                <button class="plus palt"> 
+                </button>
+              </form>
+          {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div> 
+    {%if titles %}
+    <div class="col-lg-2 col-md-4 col-sm-6"> 
+      <h1> Found Books</h1>
+      <ul class="list-group" id="books">
+        {% for title in titles %}
+          <li class="list-group-item">
+            <p> {{ title }}</p>
+          </li>
+        {% endfor %}
+      </ul>
+    </div> 
+    {% endif %}
   </div>
 {% endblock %}

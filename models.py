@@ -9,35 +9,30 @@ bcrypt = Bcrypt()
 db = SQLAlchemy()
 
 
-# Could be adapter to Comments class
-# class Message(db.Model):
-#     """An individual message ("warble")."""
+class Book(db.Model):
+    """A Book read by the BookClub members."""
 
-#     __tablename__ = 'messages'
+    __tablename__ = 'books'
 
-#     id = db.Column(
-#         db.Integer,
-#         primary_key=True,
-#     )
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+    )
 
-#     text = db.Column(
-#         db.String(140),
-#         nullable=False,
-#     )
+    booktitle = db.Column(
+        db.String(200),
+        nullable=False,
+    )
+    bookauthor = db.Column(
+        db.String(200),
+    )
 
-#     timestamp = db.Column(
-#         db.DateTime,
-#         nullable=False,
-#         default=datetime.utcnow(),
-#     )
+    bookimag_url = db.Column(
+        db.Text,
+        default="/static/images/book_logo.png",
+    )
 
-#     user_id = db.Column(
-#         db.Integer,
-#         db.ForeignKey('users.id', ondelete='CASCADE'),
-#         nullable=False,
-#     )
-
-#     user = db.relationship('User')
+    users_read = db.relationship('Read', cascade="all, delete-orphan")
 
 class User(db.Model):
     """User in the system."""
@@ -73,8 +68,8 @@ class User(db.Model):
         db.Text,
         nullable=False,
     )
-
-    # messages = db.relationship('Message')
+    
+    reads = db.relationship('Read', back_populates='user', cascade="all, delete-orphan")
 
 
     def __repr__(self):
@@ -118,9 +113,35 @@ class User(db.Model):
                 return user
 
         return False
+    
+    @property
+    def books_read(self):
+        """Get all books read by the user."""
+        return [read.book for read in self.reads]
 
+class Read(db.Model):
+    """Accounts of books read by each user."""
 
+    __tablename__ = 'reads'
 
+    id = db.Column(
+        db.Integer, 
+        primary_key=True)
+    
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete='cascade'),
+        nullable=False,
+    )
+    
+    book_id = db.Column(
+        db.Integer,
+        db.ForeignKey('books.id', ondelete='cascade'),
+        nullable=False,
+    )
+
+    user = db.relationship('User')
+    book = db.relationship('Book')
 
 def connect_db(app):
     """Connect this database to provided Flask app.

@@ -27,16 +27,16 @@
       </a>
     </div>
     <ul class="nav navbar-nav navbar-right">
-      <!-- {% if request.endpoint != None %}
+      {% if request.endpoint != None %}
       <li>
-        <form class="navbar-form navbar-right" action="/users">
-          <input name="q" class="form-control" placeholder="Search Warbler" id="search">
+        <form class="navbar-form navbar-right" action="/search">
+          <input name="q" class="form-control" placeholder="Search Book Online" id="search">
           <button class="btn btn-default">
             <span class="fa fa-search"></span>
           </button>
         </form>
       </li>
-      {% endif %} -->
+      {% endif %}
       {% if not g.user %}
       <li><a href="/signup">Sign up</a></li>
       <li><a href="/login">Log in</a></li>
@@ -51,9 +51,9 @@
   </div>
 </nav>
 <div class="container">
-  <!-- {% for category, message in get_flashed_messages(with_categories=True) %}
+  {% for category, message in get_flashed_messages(with_categories=True) %}
   <div class="alert alert-{{ category }}">{{ message }}</div>
-  {% endfor %} -->
+  {% endfor %}
 
   {% block content %}
   {% endblock %}

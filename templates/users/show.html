@@ -3,19 +3,17 @@
   <div class="col-sm-6">
     <ul class="list-group" id="messages">
 
-      {% for message in messages %}
+      {% for book in user.books_read %}
 
         <li class="list-group-item">
-          <a href="/messages/{{ message.id }}" class="message-link"/>
-
+          <a href="/books/{{ book.id }}" class="book-link"></a>
+          <!-- Add reference link to book, not to user -->
           <a href="/users/{{ user.id }}">
-            <img src="{{ user.image_url }}" alt="user image" class="timeline-image">
+            <img src="{{ book.bookimag_url }}" class="timeline-image">
           </a>
 
-          <div class="message-area">
-            <a href="/users/{{ user.id }}">@{{ user.username }}</a>
-            <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>
-            <p>{{ message.text }}</p>
+          <div class="book-area">
+            <p>{{ book.booktitle }}</p>
           </div>
         </li>
 
