@@ -31,11 +31,11 @@
       <ul class="list-group" id="books">
         {% for book in g.user.books_read %}
           <li class="list-group-item">
-            <a href="/books/{{ book.id  }}" class="book-link">
+            <span class="book-link">
               <img src="{{ book.bookimag_url }}" alt="" class="timeline-image">
-            </a>
+            </span>
             <div class="review-area">
-              <a href="/books/{{ book.id}}" class="book-link"> {{ book.booktitle }} </a>
+              <span class="book-link"> {{ book.booktitle }} </span>
             </div>
             <form method="POST"
                   action="/users/books/deleteread/{{ book.id }}" id="messages-form">
@@ -52,11 +52,11 @@
       <ul class="list-group" id="books">
         {% for book in g.books_table %}
           <li class="list-group-item">
-            <a href="/books/{{ book.id  }}" class="book-link">
+            <span class="book-link">
               <img src="{{ book.bookimag_url }}" alt="" class="timeline-image">
-            </a>
+            </span>
             <div class="review-area">
-              <a href="/books/{{ book.id}}" class="book-link"> {{ book.booktitle }} </a>
+              <span class="book-link"> {{ book.booktitle }} </span>
             </div>
             <form method="POST" 
                   action="/books/delete/{{ book.id }}" id="bookdelete-form">
